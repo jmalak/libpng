@@ -1,0 +1,39 @@
+18name: zlib-download
+description: 'Download zlib archive'
+
+inputs:
+  subdir:
+    description: 'zlib installation location'
+    required: false
+    default: ''
+    type: string
+  version:
+    description: 'zlib version'
+    required: false
+    default: ''
+    type: string
+  url:
+    description: 'zlib package URL'
+    required: true
+    default: 'https://github.com/jmalak/zlib/archive/refs/tags/test-release.tar.gz'
+    type: string
+runs:
+  using: composite
+  steps:
+    - name: create zlib subdirectory
+      run: mkdir -p ${{ inputs.subdir }}
+      shell: bash
+    - name: download
+      run: |
+        curl -L -sS -o test-release.tar.gz ${{ inputs.url }}
+      working-directory: ${{ inputs.subdir }}
+      shell: bash
+    - name: extract data
+      run: |
+        7z x test-release.tar.gz
+        7z x test-release.tar
+        mv zlib-test-release ${{ inputs.version }}
+        rm *.tar 
+        rm *.gz
+      working-directory: ${{ inputs.subdir }}
+      shell: bash
